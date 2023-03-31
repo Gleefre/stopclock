@@ -5,7 +5,7 @@
            #:real-time #:run-time
            #:paused #:time #:time-flow
            #:shift #:accelerate
-           #:stop #:run #:toggle
+           #:pause #:stop #:start #:run #:toggle
            #:reset
            #:zero-time-flow-error))
 
@@ -146,13 +146,28 @@ should be `:paused' or `:run' (`:paused' takes precedence over `:run')."
   (paused clock))
 
 (defun stop (clock)
-  "Pauses the `clock', returns the `clock' itself."
+  "Stops the `clock', returns the `clock' itself. Synonymous to `pause' function."
+  (with-a-clock-slots clock
+    (setf pause-time (a-now)))
+  clock)
+
+(defun pause (clock)
+  "Pauses the `clock', returns the `clock' itself. Synonymous to `stop' function."
   (with-a-clock-slots clock
     (setf pause-time (a-now)))
   clock)
 
 (defun run (clock)
-  "Runs the `clock', returns the `clock' itself."
+  "Runs the `clock', returns the `clock' itself. Synonymous to `start' function."
+  (with-a-clock-slots clock
+    (when pause-time
+      (incf start-time (- (funcall time-source)
+                          pause-time))
+      (setf pause-time nil)))
+  clock)
+
+(defun start (clock)
+  "Starts the `clock', returns the `clock' itself. Synonymous to `run' function."
   (with-a-clock-slots clock
     (when pause-time
       (incf start-time (- (funcall time-source)
