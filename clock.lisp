@@ -165,17 +165,12 @@ returns the `clock' itself."
       (run clock)
       (stop clock)))
 
-;;; Pretty printing
+;;; Print method
 
-(defun sec-to-str (sec &aux (ms (floor sec 1/1000)) spec)
-  (format nil "~{~2,'0d:~2,'0d:~2,'0d,~3,'0d~}"
-          (dolist (dt '(1000 60 60 24) spec)
-            (push (mod ms dt) spec)
-            (setf ms (floor ms dt)))))
-
-(defmethod print-object ((clock clock) stream &aux (time (time clock)))
-  (format stream "<~:[-~; ~]~a elapsed, ~:@(~:[running~;paused~], time-flow~): ~a>"
-          (>= time 0)
-          (sec-to-str time)
-          (paused clock)
-          (time-flow clock)))
+(defmethod print-object ((clock clock) stream)
+  (print-unreadable-object (clock stream)
+    (format stream "~:@(:time ~,2f seconds :~:[running~;paused~] :time-flow~) ~:[-~;~]x~a"
+            (time clock)
+            (paused clock)
+            (plusp (time-flow clock))
+            (abs (time-flow clock)))))
