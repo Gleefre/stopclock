@@ -1,7 +1,7 @@
-* =clock=
+* clock
   =clock= is a library for measuring time using clocks.
 ** Tutorial
-*** Load the =clock= library
+*** Load the clock library
     To use this library you need to clone this repository and load the ~clock~ system it defines.
     #+BEGIN_SRC lisp
     (ql:quickload :clock)  ; with quicklisp
