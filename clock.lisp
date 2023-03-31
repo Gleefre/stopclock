@@ -83,9 +83,10 @@
   new-time)
 
 (defun shift (clock seconds)
-  "Adds `seconds' seconds to the current time on the `clock'."
+  "Adds `seconds' seconds to the current time on the `clock', returns the `clock' itself."
   (with-a-clock-slots clock
-    (decf start-time (/ seconds time-flow))))
+    (decf start-time (/ seconds time-flow)))
+  clock)
 
 (defun reset (clock &key paused run ((:time-flow flow)))
   "Resets the `clock's state. By default, only the current time is reset.
@@ -97,7 +98,8 @@ should be `:paused' or `:run' (`:paused' takes precedence over `:run')."
             pause-time (when (or paused
                                  (and pause-time (not run)))
                          current-time)
-            time-flow (or flow time-flow)))))
+            time-flow (or flow time-flow))))
+  clock)
 
 ;;; Time flow
 
@@ -113,10 +115,11 @@ should be `:paused' or `:run' (`:paused' takes precedence over `:run')."
            :clock clock
            :message "You cannot set time-flow to be equal to zero.~%  CLOCK: ~a"))
   (accelerate clock (/ new-flow
-                       (time-flow clock))))
+                       (time-flow clock)))
+  (time-flow clock))
 
 (defun accelerate (clock factor)
-  "Accelerates the `time-flow' of the `clock' by `factor' times.
+  "Accelerates the `time-flow' of the `clock' by `factor' times, returns the `clock' itself.
 `factor' cannot be zero."
   (when (zerop factor)
     (error 'zero-time-flow-error
@@ -130,7 +133,8 @@ should be `:paused' or `:run' (`:paused' takes precedence over `:run')."
     (setf start-time (+ (/ start-time factor)
                         (* (a-now)
                            (/ (1- factor) factor))))
-    (setf time-flow (* time-flow factor))))
+    (setf time-flow (* time-flow factor)))
+  clock)
 
 ;;; Clock state
 
