@@ -79,7 +79,8 @@
   (with-a-clock-slots clock
     ;; flow * (now - start) = time --> new-start = now - new-time / flow
     (setf start-time (- (a-now)
-                        (/ new-time time-flow)))))
+                        (/ new-time time-flow))))
+  new-time)
 
 (defun shift (clock seconds)
   "Adds `seconds' seconds to the current time on the `clock'."
