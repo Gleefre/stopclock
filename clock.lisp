@@ -171,7 +171,7 @@ returns the `clock' itself."
 
 (defmethod print-object ((clock clock) stream)
   (print-unreadable-object (clock stream)
-    (format stream "~:@(:time ~,2f seconds :~:[running~;paused~] :time-flow~) ~:[-~;~]x~a"
+    (format stream "~:@(clock :time ~,2f seconds :~:[running~;paused~] :time-flow~) ~:[-~;~]x~a"
             (time clock)
             (paused clock)
             (plusp (time-flow clock))
