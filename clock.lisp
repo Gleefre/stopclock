@@ -141,7 +141,8 @@ should be `:paused' or `:run' (`:paused' takes precedence over `:run')."
   "Pauses the `clock' if `state' is T and runs it if `state' is NIL."
   (if state
       (stop clock)
-      (run clock)))
+      (run clock))
+  (paused clock))
 
 (defun stop (clock)
   "Pauses the `clock', returns the `clock' itself."
