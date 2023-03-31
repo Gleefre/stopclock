@@ -153,3 +153,18 @@
     CL-USER> (clock:reset *c* :paused t :run t)
     #<CLOCK :TIME 0.00 SECONDS :PAUSED :TIME-FLOW x10>
     #+END_SRC
+*** Time source
+    By default the clock will get current time with ~get-internal-real-time~ function.
+    This behaviour can be changed by passing ~:time-source~ parameter to the constructor.
+    This must be a function that returns the number of seconds when you call it.
+    For convenience =clock= defines two functions: ~clock:real-time~ that uses ~get-internal-real-time~
+    (but divides it by ~internal-time-units-per-second~) and ~clock:run-time~ that uses ~get-internal-run-time~
+    instead.
+    #+BEGIN_SRC lisp
+    CL-USER> (let ((real-clock (clock:make-clock :paused nil))
+                   (run-clock  (clock:make-clock :paused nil :time-source #'clock:run-time)))
+               (sleep 5)
+               (list real-clock run-clock))
+    (#<CLOCK :TIME 5.00 SECONDS :RUNNING :TIME-FLOW x1>
+     #<CLOCK :TIME 0.00 SECONDS :RUNNING :TIME-FLOW x1>)
+    #+END_SRC
