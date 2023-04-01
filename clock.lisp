@@ -43,7 +43,7 @@
   time-flow
   time-source)
 
-(defun make-clock (&key (paused t)
+(defun make-clock (&key (paused nil)
                         (time-flow 1)
                         ((:time-source time-source%) 'real-time)
                         (time 0)
