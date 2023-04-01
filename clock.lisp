@@ -45,6 +45,8 @@
   time-source
   freeze)
 
+(declaim (ftype (function (clock) number) time))
+
 (defun make-clock (&key (paused nil)
                         (time-flow 1)
                         ((:time-source time-source%) 'real-time)
