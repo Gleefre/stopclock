@@ -18,67 +18,68 @@
     CL-USER> (defparameter *c* (clock:make-clock))
     *C*
     CL-USER> *c*
-    #<CLOCK :TIME 0.00 SECONDS :PAUSED :TIME-FLOW x1>
+    #<CLOCK :TIME 1.98 SECONDS :RUNNING :TIME-FLOW x1>
     #+END_SRC
     You can start the clock with ~clock:run~ function and you can stop it with ~clock:stop~ function.
     #+BEGIN_SRC lisp
-    CL-USER> (clock:run *c*)
-    #<CLOCK :TIME 0.00 SECONDS :RUNNING :TIME-FLOW x1>
-    CL-USER> *c*
-    #<CLOCK :TIME 1.01 SECONDS :RUNNING :TIME-FLOW x1>
     CL-USER> (clock:stop *c*)
-    #<CLOCK :TIME 4.50 SECONDS :PAUSED :TIME-FLOW x1>
+    #<CLOCK :TIME 11.08 SECONDS :PAUSED :TIME-FLOW x1>
+    CL-USER> (clock:run *c*)
+    #<CLOCK :TIME 11.08 SECONDS :RUNNING :TIME-FLOW x1>
     CL-USER> *c*
-    #<CLOCK :TIME 4.50 SECONDS :PAUSED :TIME-FLOW x1>
+    #<CLOCK :TIME 15.70 SECONDS :RUNNING :TIME-FLOW x1>  ; the clock is running
     #+END_SRC
     To get current time on the clock you can use ~clock:time~ function.
+    It returns the number of seconds passed.
     #+BEGIN_SRC lisp
     CL-USER> (float (clock:time *c*))
-    4.50308
+    32.039024
     #+END_SRC
     Finally, you can reset the current time on the clock with ~clock:reset~ function.
     #+BEGIN_SRC lisp
     CL-USER> (clock:reset *c*)
-    #<CLOCK :TIME 0.00 SECONDS :PAUSED :TIME-FLOW x1>
+    #<CLOCK :TIME 0.00 SECONDS :RUNNING :TIME-FLOW x1>
     #+END_SRC
     It does not reset the paused / running state of the clock by default, but you can
-    specify it with ~:paused T~ or ~:run T~ key parameters.
+    specify it with ~:paused T~ or ~:run T~ key arguments.
     #+BEGIN_SRC lisp
+    CL-USER> (clock:reset *c* :paused T)
+    #<CLOCK :TIME 0.00 SECONDS :PAUSED :TIME-FLOW x1>  ; clock is paused now
+    CL-USER> (clock:reset *c*)
+    #<CLOCK :TIME 0.00 SECONDS :PAUSED :TIME-FLOW x1>  ; clock is still paused
     CL-USER> (clock:reset *c* :run T)
     #<CLOCK :TIME 0.00 SECONDS :RUNNING :TIME-FLOW x1>  ; clock is running now
-    CL-USER> (clock:reset *c*)
-    #<CLOCK :TIME 0.00 SECONDS :RUNNING :TIME-FLOW x1>  ; clock is still running
-    CL-USER> (clock:reset *c* :paused T)
-    #<CLOCK :TIME 0.00 SECONDS :PAUSED :TIME-FLOW x1>  ; clock is paused
     #+END_SRC
 *** Clock parameters
     A clock has three parameters: ~time~, whether it is paused or is running, ~time-flow~.
     Time flow is the speed with which the time changes.
 
     You can pass these parameters to the initialization function.
-    For example you can create a clock that runs backwards:
+    For example you can create a paused clock that runs backwards with 5 seconds in the beginning:
     #+BEGIN_SRC lisp
-    CL-USER> (clock:make-clock :paused nil :time-flow -1)
-    #<CLOCK :TIME 0.00 SECONDS :RUNNING :TIME-FLOW -x1>
+    CL-USER> (clock:make-clock :paused t :time 5 :time-flow -1)
+    #<CLOCK :TIME 5.00 SECONDS :PAUSED :TIME-FLOW -x1>
+    CL-USER> (clock:run *)
+    #<CLOCK :TIME 5.00 SECONDS :RUNNING :TIME-FLOW -x1>
     CL-USER> *
-    #<CLOCK :TIME -1.05 SECONDS :RUNNING :TIME-FLOW -x1>
+    #<CLOCK :TIME 3.03 SECONDS :RUNNING :TIME-FLOW -x1>
     #+END_SRC
+
     For each of these parameters a setfable accessor is defined:
     ~clock:time~, ~clock:paused~ and ~clock:time-flow~.
     #+BEGIN_SRC lisp
     CL-USER> (setf (clock:paused *c*) t)
     T
-    CL-USER> (setf (clock:time-flow *c*) -100)
-    -100
+    CL-USER> (setf (clock:time-flow *c*) -10)
+    -10
     CL-USER> (list (clock:time *c*)
                    (clock:paused *c*)
                    (clock:time-flow *c*))
-    (1747303/12500 T -100)
-    CL-USER> (setf (clock:paused *c*) t
-                   (clock:time *c*) 100.2)
+    (322437913/1000000 T -10)
+    CL-USER> (setf (clock:time *c*) 100.2)
     100.2
     CL-USER> *c*
-    #<CLOCK :TIME 100.20 SECONDS :PAUSED :TIME-FLOW -x100>
+    #<CLOCK :TIME 100.20 SECONDS :PAUSED :TIME-FLOW -x10>
     #+END_SRC
 *** State of the clock
     The paused / running state of the clock can be accessed with ~clock:paused~.
@@ -88,17 +89,17 @@
     These function return the clock itself.
     #+BEGIN_SRC lisp
     CL-USER> (clock:stop *c*)
-    #<CLOCK :TIME 100.20 SECONDS :RUNNING :TIME-FLOW -x100>
+    #<CLOCK :TIME 100.20 SECONDS :RUNNING :TIME-FLOW -x10>
     CL-USER> (clock:run *c*)
-    #<CLOCK :TIME -278.34 SECONDS :PAUSED :TIME-FLOW -x100>
+    #<CLOCK :TIME -278.34 SECONDS :PAUSED :TIME-FLOW -x10>
     CL-USER> (clock:stop *c*)
-    #<CLOCK :TIME -584.55 SECONDS :PAUSED :TIME-FLOW -x100>
+    #<CLOCK :TIME -584.55 SECONDS :PAUSED :TIME-FLOW -x10>
     CL-USER> (clock:pause *c*)
-    #<CLOCK :TIME -584.55 SECONDS :PAUSED :TIME-FLOW -x100>
+    #<CLOCK :TIME -584.55 SECONDS :PAUSED :TIME-FLOW -x10>
     CL-USER> (clock:toggle *c*)
-    #<CLOCK :TIME -584.56 SECONDS :RUNNING :TIME-FLOW -x100>
+    #<CLOCK :TIME -584.56 SECONDS :RUNNING :TIME-FLOW -x10>
     CL-USER> (clock:toggle *c*)
-    #<CLOCK :TIME -751.64 SECONDS :PAUSED :TIME-FLOW -x100>
+    #<CLOCK :TIME -751.64 SECONDS :PAUSED :TIME-FLOW -x10>
     #+END_SRC
 *** Time on the clock
     The time on the clock can accessed with ~clock:time~.
@@ -109,12 +110,13 @@
     CL-USER> (setf (clock:time *c*) 0)
     0
     CL-USER> *c*
-    #<CLOCK :TIME 0.00 SECONDS :PAUSED :TIME-FLOW x1>
+    #<CLOCK :TIME 0.00 SECONDS :PAUSED :TIME-FLOW -x10>
     CL-USER> (incf (clock:time *c*) 10)
     10
     CL-USER> *c*
-    #<CLOCK :TIME 10.00 SECONDS :PAUSED :TIME-FLOW x1>
+    #<CLOCK :TIME 10.00 SECONDS :PAUSED :TIME-FLOW -x10>
     CL-USER> (clock:shift *c* 20)
+    #<CLOCK :TIME 30.00 SECONDS :PAUSED :TIME-FLOW -x10>
     #+END_SRC
 *** Time flow of the clock
     The time flow of the clock can accessed with ~clock:time-flow~.
@@ -123,19 +125,19 @@
     Unlike ~setf~ or ~incf~ it returns the clock itself.
     #+BEGIN_SRC lisp
     CL-USER> (clock:run *c*)
-    #<CLOCK :TIME 0.00 SECONDS :RUNNING :TIME-FLOW x1>
+    #<CLOCK :TIME 30.00 SECONDS :RUNNING :TIME-FLOW -x10>
     CL-USER> (setf (clock:time-flow *c*) 30)
     30
     CL-USER> *c*
-    #<CLOCK :TIME 56.12 SECONDS :RUNNING :TIME-FLOW x30>
+    #<CLOCK :TIME 37.87 SECONDS :RUNNING :TIME-FLOW x30>
     CL-USER> (setf (clock:time-flow *c*) -100)
     -100
     CL-USER> *c*
-    #<CLOCK :TIME 9.42 SECONDS :RUNNING :TIME-FLOW -x100>
+    #<CLOCK :TIME 259.69 SECONDS :RUNNING :TIME-FLOW -x100>
     CL-USER> (clock:accelerate *c* -1)
-    #<CLOCK :TIME -1506.75 SECONDS :RUNNING :TIME-FLOW x100>
+    #<CLOCK :TIME -528.73 SECONDS :RUNNING :TIME-FLOW x100>
     CL-USER> (clock:accelerate *c* 1/100)
-    #<CLOCK :TIME -871.06 SECONDS :RUNNING :TIME-FLOW x1>
+    #<CLOCK :TIME 312.19 SECONDS :RUNNING :TIME-FLOW x1>
     #+END_SRC
 *** Reset the clock
     To reset the clock you can use ~clock:reset~ function.
@@ -172,3 +174,57 @@
     (#<CLOCK :TIME 5.00 SECONDS :RUNNING :TIME-FLOW x1>
      #<CLOCK :TIME 0.00 SECONDS :RUNNING :TIME-FLOW x1>)
     #+END_SRC
+*** Synchronized clock
+    It is impossible to start two clocks at the same time, since they may have different time sources.
+    However, synchronized clocks can be obtained by using a third clock as the time source.
+    Consider this example:
+    #+BEGIN_SRC lisp
+    CL-USER> (let ((1x (clock:make-clock))
+                   (latency (sleep 0.01))
+                   (5x (clock:make-clock :time-flow 5)))
+               (declare (ignore latency))
+               (sleep 1)
+               (= (* 5 (clock:time 1x))
+                  (clock:time 5x)))
+    NIL
+    #+END_SRC
+    We create two clocks, one running 5 times faster than another.
+    We also introduce an artificial latency between their creation.
+    As a result they are out of sync.
+    If we use the third clock as the time source paused during the creation of clocks, then
+    the clocks are synchronized:
+    #+BEGIN_SRC lisp
+    CL-USER> (let* ((clock (clock:make-clock :paused t))
+                    (1x (clock:make-clock :time-source (lambda () (clock:time clock))))
+                    (latency (sleep 0.01))
+                    (5x (clock:make-clock :time-source (lambda () (clock:time clock))
+                                          :time-flow 5)))
+               (declare (ignore latency))
+               (clock:run clock)
+               (sleep 1)
+               (clock:stop clock)
+               (= (* 5 (clock:time 1x))
+                  (clock:time 5x)))
+    T
+    #+END_SRC
+
+    For simplicity you can directly pass another clock as time source.
+    Here is another example:
+    #+BEGIN_SRC lisp
+    CL-USER> (let* ((source-clock (clock:make-clock :paused t))
+                    (up (clock:make-clock :time-source source-clock))
+                    (down (clock:make-clock :time-source source-clock
+                                            :time-flow -1 :time 50)))
+               (clock:run source-clock)
+               (format t "  up: ~a~%down: ~a~%" up down)
+               (sleep 1)
+               (format t "  up: ~a~%down: ~a~%" up down)
+               (clock:stop source-clock)
+               (= 50 (+ (clock:time up) (clock:time down))))
+      up: #<CLOCK :TIME 0.00 SECONDS :RUNNING :TIME-FLOW x1>
+    down: #<CLOCK :TIME 50.00 SECONDS :RUNNING :TIME-FLOW -x1>
+      up: #<CLOCK :TIME 1.00 SECONDS :RUNNING :TIME-FLOW x1>
+    down: #<CLOCK :TIME 49.00 SECONDS :RUNNING :TIME-FLOW -x1>
+    T
+    #+END_SRC
+    Time on the clocks ~up~ and ~down~ will always add up to 50.
