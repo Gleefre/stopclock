@@ -45,13 +45,17 @@
 
 (defun make-clock (&key (paused t)
                         (time-flow 1)
-                        (time-source #'real-time)
-                   &aux (current-time (funcall time-source)))
+                        ((:time-source time-source%) 'real-time)
+                        (time 0)
+                   &aux (time-source (if (clock-p time-source%)
+                                         (lambda () (clock:time time-source%))
+                                         time-source%))
+                        (current-time (funcall time-source)))
   (when (zerop time-flow)
     (error 'zero-time-flow-error
            :message "You cannot create a clock with time-flow equal to zero."))
   (make-clock%
-   :start-time current-time
+   :start-time (- current-time (/ time time-flow))
    :pause-time (when paused current-time)
    :time-flow time-flow
    :time-source time-source))
