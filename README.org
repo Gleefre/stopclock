@@ -174,7 +174,7 @@
     (#<CLOCK :TIME 5.00 SECONDS :RUNNING :TIME-FLOW x1>
      #<CLOCK :TIME 0.00 SECONDS :RUNNING :TIME-FLOW x1>)
     #+END_SRC
-*** Synchronized clock
+*** Synchronized clocks
     It is impossible to start two clocks at the same time, since they may have different time sources.
     However, synchronized clocks can be obtained by using a third clock as the time source.
     Consider this example:
