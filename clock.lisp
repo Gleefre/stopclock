@@ -13,7 +13,7 @@
 ;;;; limitations under the License.
 
 (defpackage #:clock
-  (:use :cl)
+  (:use #:cl)
   (:shadow #:time)
   (:export #:clock #:make-clock #:clock-p
            #:real-time #:run-time
