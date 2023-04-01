@@ -277,6 +277,9 @@
     #+END_SRC
     To keep the time read from ~up~ and ~down~ clocks in sync,
     we freeze their common source each time we need to read them.
+** Bugs & Contributions
+   Feel free to report bugs or make suggestions by filing an issue on github.
+   Feel free to submit pull requests on github as well.
 ** License
    Copyright 2023 Gleefre
 
