@@ -6,6 +6,7 @@
            #:paused #:time #:time-flow
            #:shift #:accelerate
            #:pause #:stop #:start #:run #:toggle
+           #:freeze #:unfreeze #:with-freeze
            #:reset
            #:zero-time-flow-error))
 
@@ -41,7 +42,8 @@
   start-time
   pause-time
   time-flow
-  time-source)
+  time-source
+  freeze)
 
 (defun make-clock (&key (paused nil)
                         (time-flow 1)
@@ -58,12 +60,13 @@
    :start-time (- current-time (/ time time-flow))
    :pause-time (when paused current-time)
    :time-flow time-flow
-   :time-source time-source))
+   :time-source time-source
+   :freeze nil))
 
 ;;; A pair of internal macros
 
 (defmacro with-a-clock-slots (clock &body body)
-  `(with-slots (start-time pause-time time-source time-flow)
+  `(with-slots (start-time pause-time time-source time-flow freeze)
        ,clock
      ,@body))
 
@@ -190,12 +193,41 @@ returns the `clock' itself."
       (run clock)
       (stop clock)))
 
+;;; Freezing the clock
+
+(defun freeze (clock)
+  "Freezes the `clock': the time passed will be counted during `unfreeze' if clock is running."
+  (with-a-clock-slots clock
+    (unless pause-time
+      (setf pause-time (funcall time-source)
+            freeze t)))
+  clock)
+
+(defun unfreeze (clock)
+  "Unfreezes the `clock': the time during the freeze is added if clock was running before the freeze."
+  (with-a-clock-slots clock
+    (when freeze
+      (setf pause-time nil
+            freeze nil)))
+  clock)
+
+(defmacro with-freeze (clock &body body &aux (clock-name (gensym "clock")))
+  "Locally freezes the clock."
+  `(let ((,clock-name ,clock))
+     (unwind-protect
+          (progn
+            (freeze ,clock-name)
+            ,@body)
+       (unfreeze ,clock-name))))
+
 ;;; Print method
 
 (defmethod print-object ((clock clock) stream)
   (print-unreadable-object (clock stream)
-    (format stream "~:@(clock :time ~,2f seconds :~:[running~;paused~] :time-flow~) ~:[-~;~]x~a"
+    (format stream "~:@(clock :time ~,2f seconds ~s :time-flow~) ~:[-~;~]x~a"
             (time clock)
-            (paused clock)
+            (cond ((clock-freeze clock) :freezed)
+                  ((paused clock) :paused)
+                  (t :running))
             (plusp (time-flow clock))
             (abs (time-flow clock)))))

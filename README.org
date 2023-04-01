@@ -228,3 +228,45 @@
     T
     #+END_SRC
     Time on the clocks ~up~ and ~down~ will always add up to 50.
+*** Clock freeze
+    If you want to read the time on synchronized clocks you need to pause the common source clock first.
+    That means that the time spent on processing time values will not be tracked.
+    Clock freeze solves this problem.
+    When you ~clock:freeze~ the clock it freezes the time on the clock, which is identical to pausing it.
+    However, when you ~clock:unfreeze~ it, the clock behaves as if it had not been frozen.
+    #+BEGIN_SRC lisp
+    CL-USER> (defparameter *c* (clock:make-clock))
+    *C*
+    CL-USER> (clock:freeze *c*)
+    #<CLOCK :TIME 4.19 SECONDS :FREEZED :TIME-FLOW x1>
+    CL-USER> *c*
+    #<CLOCK :TIME 4.19 SECONDS :FREEZED :TIME-FLOW x1>
+    CL-USER> (clock:unfreeze *c*)
+    #<CLOCK :TIME 10.36 SECONDS :RUNNING :TIME-FLOW x1>  ; about 6 seconds elapsed during the freeze.
+    #+END_SRC
+    It also means that the paused clock will remain paused.
+    #+BEGIN_SRC lisp
+    CL-USER> (defparameter *c* (clock:make-clock :time 3 :paused t))
+    *C*
+    CL-USER> (clock:freeze *c*)
+    #<CLOCK :TIME 3.00 SECONDS :PAUSED :TIME-FLOW x1>
+    CL-USER> (clock:unfreeze *c*)
+    #<CLOCK :TIME 3.00 SECONDS :PAUSED :TIME-FLOW x1>
+    CL-USER> *
+    #<CLOCK :TIME 3.00 SECONDS :PAUSED :TIME-FLOW x1>
+    #+END_SRC
+    =clock= also provides a macro ~clock:with-freeze~. Consider the previous example:
+    #+BEGIN_SRC lisp
+    CL-USER> (let* ((source-clock (clock:make-clock :paused t))
+                        (up (clock:make-clock :time-source source-clock))
+                        (down (clock:make-clock :time-source source-clock
+                                                :time-flow -1 :time 50)))
+               (clock:run source-clock)
+               (loop repeat 5
+                     do (sleep 0.1)
+                     always (= 50 (clock:with-freeze source-clock
+                                    (+ (clock:time up) (clock:time down))))))
+    T
+    #+END_SRC
+    To keep the time read from ~up~ and ~down~ clocks in sync,
+    we freeze their common source each time we need to read them.
