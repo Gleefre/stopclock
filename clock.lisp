@@ -107,17 +107,6 @@ should be `:paused' or `:run' (`:paused' takes precedence over `:run')."
   "Returns the current `time-flow' of the `clock'."
   (clock-time-flow clock))
 
-(defun (setf time-flow) (new-flow clock)
-  "Sets the `time-flow' of the `clock' to the `new-flow'.
-`new-flow' cannot be zero."
-  (when (zerop new-flow)
-    (error 'zero-time-flow-error
-           :clock clock
-           :message "You cannot set time-flow to be equal to zero.~%  CLOCK: ~a"))
-  (accelerate clock (/ new-flow
-                       (time-flow clock)))
-  (time-flow clock))
-
 (defun accelerate (clock factor)
   "Accelerates the `time-flow' of the `clock' by `factor' times, returns the `clock' itself.
 `factor' cannot be zero."
@@ -136,18 +125,18 @@ should be `:paused' or `:run' (`:paused' takes precedence over `:run')."
     (setf time-flow (* time-flow factor)))
   clock)
 
+(defun (setf time-flow) (new-flow clock)
+  "Sets the `time-flow' of the `clock' to the `new-flow'.
+`new-flow' cannot be zero."
+  (when (zerop new-flow)
+    (error 'zero-time-flow-error
+           :clock clock
+           :message "You cannot set time-flow to be equal to zero.~%  CLOCK: ~a"))
+  (accelerate clock (/ new-flow
+                       (time-flow clock)))
+  (time-flow clock))
+
 ;;; Clock state
-
-(defun paused (clock)
-  "Returns T if the `clock' is paused and NIL if it is running."
-  (not (not (clock-pause-time clock))))
-
-(defun (setf paused) (state clock)
-  "Pauses the `clock' if `state' is T and runs it if `state' is NIL."
-  (if state
-      (stop clock)
-      (run clock))
-  (paused clock))
 
 (defun stop (clock)
   "Stops the `clock', returns the `clock' itself. Synonymous to `pause' function."
@@ -178,6 +167,17 @@ should be `:paused' or `:run' (`:paused' takes precedence over `:run')."
                           pause-time))
       (setf pause-time nil)))
   clock)
+
+(defun paused (clock)
+  "Returns T if the `clock' is paused and NIL if it is running."
+  (not (not (clock-pause-time clock))))
+
+(defun (setf paused) (state clock)
+  "Pauses the `clock' if `state' is T and runs it if `state' is NIL."
+  (if state
+      (stop clock)
+      (run clock))
+  (paused clock))
 
 (defun toggle (clock)
   "Runs the `clock' if it was paused and stops it otherwise,
