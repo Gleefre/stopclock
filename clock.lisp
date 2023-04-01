@@ -1,7 +1,7 @@
 (defpackage #:clock
   (:use :cl)
   (:shadow #:time)
-  (:export #:clock #:make-clock
+  (:export #:clock #:make-clock #:clock-p
            #:real-time #:run-time
            #:paused #:time #:time-flow
            #:shift #:accelerate
