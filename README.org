@@ -66,6 +66,20 @@ a clock that runs backwards, or a clock that runs 2 times faster.
    CL-USER> (clock:reset *c* :run T)
    #<CLOCK :TIME 0.00 SECONDS :RUNNING :TIME-FLOW x1>  ; clock is running now
    #+END_SRC
+** Copy clock
+   Most defined functions, such as ~clock:stop~ and ~clock:run~, act destructively on passed clock.
+   You can copy a clock with ~clock:copy-clock~.
+   #+BEGIN_SRC lisp
+   CL-USER> (list *c* *d*)
+   (#<CLOCK :TIME 5.09 SECONDS :RUNNING :TIME-FLOW x1>
+    #<CLOCK :TIME 5.09 SECONDS :RUNNING :TIME-FLOW x1>)
+   CL-USER> (list *c* (clock:stop *d*))
+   (#<CLOCK :TIME 11.72 SECONDS :RUNNING :TIME-FLOW x1>
+    #<CLOCK :TIME 11.72 SECONDS :PAUSED :TIME-FLOW x1>)
+   CL-USER> (list *c* *d*)
+   (#<CLOCK :TIME 13.56 SECONDS :RUNNING :TIME-FLOW x1>
+    #<CLOCK :TIME 11.72 SECONDS :PAUSED :TIME-FLOW x1>)
+   #+END_SRC
 ** Clock parameters
    A clock has three parameters: ~time~, whether it is paused or is running, ~time-flow~.
    Time flow is the speed with which the time changes.
