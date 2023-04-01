@@ -3,8 +3,11 @@
 #+email: varedif.a.s@gmail.com
 
 #+language: en
+#+options: toc:nil
 
 =clock= is a library for measuring time using clocks.
+
+#+toc: headlines 2
 
 It allows you to create a clock, pause it and resume it.
 You can also change its speed - for example you can have
