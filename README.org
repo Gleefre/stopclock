@@ -12,6 +12,13 @@
     (asdf:load-system :clock)  ; with asdf
     (load "path/to/repository/clock.lisp")  ; without loading the system
     #+END_SRC
+    Note that you can't ~(:use-package :clock)~ because it defines ~clock:time~ function.
+    You will need to shadow ~clock:time~:
+    #+BEGIN_SRC lisp
+    (defpackage #:my-package
+      (:use #:cl #:clock)
+      (:shadowing-import-from #:cl #:time))
+    #+END_SRC
 *** Simple usage
     To create a clock use ~make-clock~ function.
     #+BEGIN_SRC lisp
