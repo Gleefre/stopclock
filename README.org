@@ -1,3 +1,9 @@
+#+title: Clock
+#+author: Gleefre
+#+email: varedif.a.s@gmail.com
+
+#+language: en
+
 * clock
   =clock= is a library for measuring time using clocks.
 
