@@ -203,10 +203,10 @@ a clock that runs backwards, or a clock that runs 2 times faster.
     If you try to set it to zero the ~sc:zero-clock-speed-error~ will be signalled.
 ** Reset the clock
    To reset the clock you can use ~sc:reset~ function.
-   By default it only sets the time to 0.
+   By default it only resets the time to 0.
    You can pass one of ~:paused~ or ~:run~ key arguments to
    set the clock's state to the corresponding value.
-   In the same manner you can use ~:speed~ argument.
+   You can also specify ~:speed~ and ~:time~ to be set.
    The function returns the clock itself.
    #+BEGIN_SRC lisp
    CL-USER> (sc:reset *c* :paused t)
@@ -215,6 +215,8 @@ a clock that runs backwards, or a clock that runs 2 times faster.
    #<CLOCK :TIME 0.00 SECONDS :RUNNING :SPEED x1>
    CL-USER> (sc:reset *c* :speed 10)
    #<CLOCK :TIME 0.00 SECONDS :RUNNING :SPEED x10>
+   CL-USER> (sc:reset *c* :time -10)
+   #<CLOCK :TIME -10.00 SECONDS :RUNNING :SPEED x10>
    #+END_SRC
    The ~:paused~ arguments takes precedence over ~:run~:
    #+BEGIN_SRC lisp
