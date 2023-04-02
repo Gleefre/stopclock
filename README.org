@@ -189,6 +189,9 @@ a clock that runs backwards, or a clock that runs 2 times faster.
    CL-USER> (stopclock:accelerate *c* 1/100)
    #<CLOCK :TIME 312.19 SECONDS :RUNNING :SPEED x1>
    #+END_SRC
+*** zero-clock-speed-error
+    The speed of the clock cannot be equal to zero.
+    If you try to set it to zero the ~stopclock:zero-clock-speed-error~ will be signalled.
 ** Reset the clock
    To reset the clock you can use ~stopclock:reset~ function.
    By default it only sets the time to 0.
