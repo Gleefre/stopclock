@@ -111,13 +111,13 @@
     (decf start-time (/ seconds speed)))
   clock)
 
-(defun reset (clock &key paused run ((:speed new-speed)))
-  "Resets the `clock's state. By default, only the current time is reset.
-You can specify a new state for the `:speed' and whether the clock
+(defun reset (clock &key (time 0) ((:speed new-speed)) paused run)
+  "Resets the `clock's state. By default, only the current time is reset to 0.
+You can specify a new state for the `:speed', `:time' and whether the clock
 should be `:paused' or `:run' (`:paused' takes precedence over `:run')."
   (with-a-clock-slots clock
     (let ((current-time (funcall time-source)))
-      (setf start-time current-time
+      (setf start-time (- current-time (/ time (or new-speed speed)))
             pause-time (when (or paused
                                  (and pause-time (not run)))
                          current-time)
