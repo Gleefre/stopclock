@@ -15,7 +15,7 @@
 (defpackage #:stopclock/tests
   (:use #:cl #:stopclock #:fiveam)
   (:shadowing-import-from #:stopclock
-                          #:time #:run))
+                          #:time #:run #:speed))
 
 (in-package #:stopclock/tests)
 
@@ -37,18 +37,18 @@
   (let ((c (make-clock)))
     (is-false (paused c))))
 
-(test make-clock-time-flow
-  (for-all ((flow (gen-integer :min 1)))
-    (let ((c+ (make-clock :time-flow flow))
-          (c- (make-clock :time-flow (- flow))))
+(test make-clock-time-speed
+  (for-all ((speed (gen-integer :min 1)))
+    (let ((c+ (make-clock :speed speed))
+          (c- (make-clock :speed (- speed))))
       (is-false (minusp (time c+)))
       (is-false (plusp (time c-)))
       (sleep 1/100)
       (is-true (plusp (time c+)))
       (is-true (minusp (time c-))))))
 
-(test make-clock-zero-flow
-  (signals zero-time-flow-error (make-clock :time-flow 0)))
+(test make-clock-zero-speed
+  (signals zero-clock-speed-error (make-clock :speed 0)))
 
 (test make-clock-time
   (for-all ((time (gen-float)))
@@ -128,36 +128,36 @@
     (stop c)
     (is (= 13 (setf (time c) 13)))))
 
-(def-suite* clock-time-flow :in :stopclock
-  :description "Test changing the time flow of the clock")
+(def-suite* clock-time-speed :in :stopclock
+  :description "Test changing the speed of the clock")
 
 (test clock-accelerate
   (let ((c (make-clock)))
-    (signals zero-time-flow-error
+    (signals zero-clock-speed-error
       (accelerate c 0))
     (setf (time (stop c)) 2)
-    (for-all ((flow (gen-integer :min 1))
+    (for-all ((factor (gen-integer :min 1))
               (sign (gen-one-element -1 1)))
-      (let ((old-flow (time-flow c)))
-        (accelerate c (* sign flow))
-        (is (= (time-flow c) (* old-flow flow sign)))
+      (let ((speed (speed c)))
+        (accelerate c (* sign factor))
+        (is (= (speed c) (* speed factor sign)))
         (is (= 2 (time c)))))))
 
-(test clock-setf-time-flow
+(test clock-setf-speed
   (let ((c (make-clock)))
-    (signals zero-time-flow-error
-      (setf (time-flow c) 0))
+    (signals zero-clock-speed-error
+      (setf (speed c) 0))
     (setf (time (stop c)) 2)
-    (for-all ((flow (gen-integer :min 1))
+    (for-all ((speed (gen-integer :min 1))
               (sign (gen-one-element -1 1)))
-      (setf (time-flow c) (* flow sign))
-      (is (= (time-flow c) (* flow sign)))
+      (setf (speed c) (* speed sign))
+      (is (= (speed c) (* speed sign)))
       (is (= 2 (time c))))))
 
-(test clock-time-flow-return-value
+(test clock-speed-return-value
   (let ((c (make-clock)))
     (is (eq c (accelerate c -1)))
-    (is (= 10 (setf (time-flow c) 10)))))
+    (is (= 10 (setf (speed c) 10)))))
 
 (def-suite* clock-reset :in :stopclock
   :description "Test the reset function")
@@ -193,9 +193,9 @@
     (is (eq c (reset c :run t)))
     (is (eq c (reset c :paused t)))
     (is (eq c (reset c :run t :paused t)))
-    (is (eq c (reset c :time-flow 4)))
-    (is (eq c (reset c :run t :time-flow 4)))
-    (is (eq c (reset c :paused t :time-flow 4)))))
+    (is (eq c (reset c :speed 4)))
+    (is (eq c (reset c :run t :speed 4)))
+    (is (eq c (reset c :paused t :speed 4)))))
 
 (def-suite* clock-advanced :in :stopclock
   :description "Test the time source, clock freeze, copy-clock")
@@ -205,7 +205,7 @@
          (1x (make-clock :time-source (lambda () (time clock))))
          (latency (sleep 0.01))
          (5x (make-clock :time-source (lambda () (time clock))
-                               :time-flow 5)))
+                               :speed 5)))
     (declare (ignore latency))
     (run clock)
     (sleep 1)
@@ -218,8 +218,8 @@
          (c* (make-clock :paused t :time-source 'run-time))
          (a  (make-clock :time-source c))
          (a* (make-clock :time-source c*))
-         (b  (make-clock :time-source c :time-flow 5))
-         (b* (make-clock :time-source c* :time-flow 5)))
+         (b  (make-clock :time-source c :speed 5))
+         (b* (make-clock :time-source c* :speed 5)))
     (loop repeat 100
           do (sleep 0.01)
           do (is-true (with-freeze c

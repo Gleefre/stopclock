@@ -14,15 +14,15 @@
 
 (defpackage #:stopclock
   (:use #:cl)
-  (:shadow #:time)
+  (:shadow #:time #:speed)
   (:export #:clock #:make-clock #:clock-p #:copy-clock
            #:real-time #:run-time
-           #:paused #:time #:time-flow
+           #:paused #:time #:speed
            #:shift #:accelerate
            #:pause #:stop #:start #:run #:toggle
            #:freeze #:unfreeze #:with-freeze
            #:reset
-           #:zero-time-flow-error))
+           #:zero-clock-speed-error))
 
 (in-package #:stopclock)
 
@@ -36,15 +36,15 @@
   (/ (get-internal-run-time)
      internal-time-units-per-second))
 
-;;; Zero-flow condition
+;;; Zero clock speed condition
 
-(define-condition zero-time-flow-error (error)
+(define-condition zero-clock-speed-error (error)
   ((clock :initarg :clock
           :initform nil
           :reader clock)
    (message :initarg :message
-            :initform "Time flow cannot be equal to zero."))
-  (:documentation "Condition of setting the time-flow equal to zero.")
+            :initform "Clock speed cannot be equal to zero."))
+  (:documentation "Condition of setting the clock speed equal to zero.")
   (:report (lambda (condition stream)
              (format stream
                      (slot-value condition 'message)
@@ -55,34 +55,34 @@
 (defstruct (clock (:constructor make-clock%))
   start-time
   pause-time
-  time-flow
+  speed
   time-source
   freeze)
 
 (declaim (ftype (function (clock) number) time))
 
 (defun make-clock (&key (paused nil)
-                        (time-flow 1)
+                        (speed 1)
                         ((:time-source time-source%) 'real-time)
                         (time 0)
                    &aux (time-source (if (clock-p time-source%)
                                          (lambda () (time time-source%))
                                          time-source%))
                         (current-time (funcall time-source)))
-  (when (zerop time-flow)
-    (error 'zero-time-flow-error
-           :message "You cannot create a clock with time-flow equal to zero."))
+  (when (zerop speed)
+    (error 'zero-clock-speed-error
+           :message "You cannot create a clock with speed equal to zero."))
   (make-clock%
-   :start-time (- current-time (/ time time-flow))
+   :start-time (- current-time (/ time speed))
    :pause-time (when paused current-time)
-   :time-flow time-flow
+   :speed speed
    :time-source time-source
    :freeze nil))
 
 ;;; A pair of internal macros
 
 (defmacro with-a-clock-slots (clock &body body)
-  `(with-slots (start-time pause-time time-source time-flow freeze)
+  `(with-slots (start-time pause-time time-source speed freeze)
        ,clock
      ,@body))
 
@@ -95,25 +95,25 @@
   "Returns the current time on the `clock'."
   (with-a-clock-slots clock
     (* (- (a-now) start-time)
-       time-flow)))
+       speed)))
 
 (defun (setf time) (new-time clock)
   "Sets the current time on the `clock' to the `new-time'."
   (with-a-clock-slots clock
-    ;; flow * (now - start) = time --> new-start = now - new-time / flow
+    ;; speed * (now - start) = time --> new-start = now - new-time / speed
     (setf start-time (- (a-now)
-                        (/ new-time time-flow))))
+                        (/ new-time speed))))
   new-time)
 
 (defun shift (clock seconds)
   "Adds `seconds' seconds to the current time on the `clock', returns the `clock' itself."
   (with-a-clock-slots clock
-    (decf start-time (/ seconds time-flow)))
+    (decf start-time (/ seconds speed)))
   clock)
 
-(defun reset (clock &key paused run ((:time-flow flow)))
+(defun reset (clock &key paused run ((:speed new-speed)))
   "Resets the `clock's state. By default, only the current time is reset.
-You can specify a new state for the `:time-flow' and whether the clock
+You can specify a new state for the `:speed' and whether the clock
 should be `:paused' or `:run' (`:paused' takes precedence over `:run')."
   (with-a-clock-slots clock
     (let ((current-time (funcall time-source)))
@@ -121,43 +121,42 @@ should be `:paused' or `:run' (`:paused' takes precedence over `:run')."
             pause-time (when (or paused
                                  (and pause-time (not run)))
                          current-time)
-            time-flow (or flow time-flow))))
+            speed (or new-speed speed))))
   clock)
 
-;;; Time flow
+;;; Clock speed
 
-(defun time-flow (clock)
-  "Returns the current `time-flow' of the `clock'."
-  (clock-time-flow clock))
+(defun speed (clock)
+  "Returns the current `speed' of the `clock'."
+  (clock-speed clock))
 
 (defun accelerate (clock factor)
-  "Accelerates the `time-flow' of the `clock' by `factor' times, returns the `clock' itself.
+  "Accelerates the `speed' of the `clock' by `factor' times, returns the `clock' itself.
 `factor' cannot be zero."
   (when (zerop factor)
-    (error 'zero-time-flow-error
+    (error 'zero-clock-speed-error
            :clock clock
-           :message "You cannot accelerate the time-flow by 0.~%  CLOCK: ~a"))
+           :message "You cannot accelerate the speed of the clock by 0.~%  CLOCK: ~a"))
   (with-a-clock-slots clock
-    ;; time = (now - start) * old-flow
-    ;;      = (now - new-start) * old-flow * factor
+    ;; time = (now - start) * old-speed
+    ;;      = (now - new-start) * old-speed * factor
     ;; now - start = (now - new-start) * factor
     ;; new-start = now - (now - start) / factor = now * (factor - 1) / factor + start / factor
     (setf start-time (+ (/ start-time factor)
                         (* (a-now)
                            (/ (1- factor) factor))))
-    (setf time-flow (* time-flow factor)))
+    (setf speed (* speed factor)))
   clock)
 
-(defun (setf time-flow) (new-flow clock)
-  "Sets the `time-flow' of the `clock' to the `new-flow'.
-`new-flow' cannot be zero."
-  (when (zerop new-flow)
-    (error 'zero-time-flow-error
+(defun (setf speed) (new-speed clock)
+  "Sets the `speed' of the `clock' to the `new-speed'.
+`new-speed' cannot be zero."
+  (when (zerop new-speed)
+    (error 'zero-clock-speed-error
            :clock clock
-           :message "You cannot set time-flow to be equal to zero.~%  CLOCK: ~a"))
-  (accelerate clock (/ new-flow
-                       (time-flow clock)))
-  (time-flow clock))
+           :message "You cannot set speed to be equal to zero.~%  CLOCK: ~a"))
+  (accelerate clock (/ new-speed (speed clock)))
+  (speed clock))
 
 ;;; Clock state
 
@@ -240,10 +239,10 @@ returns the `clock' itself."
 
 (defmethod print-object ((clock clock) stream)
   (print-unreadable-object (clock stream)
-    (format stream "~:@(clock :time ~,2f seconds ~s :time-flow~) ~:[-~;~]x~a"
+    (format stream "~:@(clock :time ~,2f seconds ~s :speed~) ~:[-~;~]x~a"
             (time clock)
             (cond ((clock-freeze clock) :freezed)
                   ((paused clock) :paused)
                   (t :running))
-            (plusp (time-flow clock))
-            (abs (time-flow clock)))))
+            (plusp (speed clock))
+            (abs (speed clock)))))
