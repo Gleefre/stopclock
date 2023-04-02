@@ -18,7 +18,7 @@
   (:export #:clock #:make-clock #:clock-p #:copy-clock
            #:real-time #:run-time
            #:paused #:time #:speed
-           #:shift #:accelerate
+           #:adjust #:accelerate
            #:pause #:stop #:start #:run #:toggle
            #:freeze #:unfreeze #:with-freeze
            #:reset
@@ -105,7 +105,7 @@
                         (/ new-time speed))))
   new-time)
 
-(defun shift (clock seconds)
+(defun adjust (clock seconds)
   "Adds `seconds' seconds to the current time on the `clock', returns the `clock' itself."
   (with-a-clock-slots clock
     (decf start-time (/ seconds speed)))

@@ -104,13 +104,13 @@
 (def-suite* clock-time :in :stopclock
   :description "Test changing the time of the clock")
 
-(test clock-shift
+(test clock-adjust
   (let ((c (make-clock :paused t))
         (sum 0))
     (is-true (zerop (time c)))
-    (for-all ((shift (gen-integer)))
-      (incf sum shift)
-      (shift c shift)
+    (for-all ((adjust (gen-integer)))
+      (incf sum adjust)
+      (adjust c adjust)
       (is (= sum (time c))))))
 
 (test clock-setf-time
@@ -124,7 +124,7 @@
 
 (test clock-time-return-value
   (let ((c (make-clock)))
-    (is (eq c (shift c 0)))
+    (is (eq c (adjust c 0)))
     (stop c)
     (is (= 13 (setf (time c) 13)))))
 

@@ -154,7 +154,7 @@ a clock that runs backwards, or a clock that runs 2 times faster.
 ** Time on the clock
    The time on the clock can accessed with ~stopclock:time~.
    You can set the time by combining ~stopclock:time~ with ~setf~.
-   There is also a ~stopclock:shift~ function that increments / decrements the current time by a given delta.
+   There is also a ~stopclock:adjust~ function that increments / decrements the current time by a given delta.
    Unlike ~setf~ or ~incf~ it returns the clock itself.
    #+BEGIN_SRC lisp
    CL-USER> (setf (stopclock:time *c*) 0)
@@ -165,7 +165,7 @@ a clock that runs backwards, or a clock that runs 2 times faster.
    10
    CL-USER> *c*
    #<CLOCK :TIME 10.00 SECONDS :PAUSED :SPEED -x10>
-   CL-USER> (stopclock:shift *c* 20)
+   CL-USER> (stopclock:adjust *c* 20)
    #<CLOCK :TIME 30.00 SECONDS :PAUSED :SPEED -x10>
    #+END_SRC
 ** Speed of the clock
