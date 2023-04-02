@@ -12,7 +12,7 @@
 ;;;; See the License for the specific language governing permissions and
 ;;;; limitations under the License.
 
-(defpackage #:clock
+(defpackage #:stopclock
   (:use #:cl)
   (:shadow #:time)
   (:export #:clock #:make-clock #:clock-p #:copy-clock
@@ -24,7 +24,7 @@
            #:reset
            #:zero-time-flow-error))
 
-(in-package #:clock)
+(in-package #:stopclock)
 
 ;;; Possible functions for time
 
@@ -66,7 +66,7 @@
                         ((:time-source time-source%) 'real-time)
                         (time 0)
                    &aux (time-source (if (clock-p time-source%)
-                                         (lambda () (clock:time time-source%))
+                                         (lambda () (time time-source%))
                                          time-source%))
                         (current-time (funcall time-source)))
   (when (zerop time-flow)

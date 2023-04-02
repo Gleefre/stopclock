@@ -12,17 +12,17 @@
 ;;;; See the License for the specific language governing permissions and
 ;;;; limitations under the License.
 
-(defpackage #:clock/tests
-  (:use #:cl #:clock #:fiveam)
-  (:shadowing-import-from #:clock
+(defpackage #:stopclock/tests
+  (:use #:cl #:stopclock #:fiveam)
+  (:shadowing-import-from #:stopclock
                           #:time #:run))
 
-(in-package #:clock/tests)
+(in-package #:stopclock/tests)
 
-(def-suite :clock
+(def-suite :stopclock
   :description "Main suite")
 
-(def-suite* clock-initialization :in :clock
+(def-suite* clock-initialization :in :stopclock
   :description "Test the initialization of a clock")
 
 (test make-clock-clock-p
@@ -54,7 +54,7 @@
   (for-all ((time (gen-float)))
     (is (= time (time (make-clock :time time :paused t))))))
 
-(def-suite* clock-state :in :clock
+(def-suite* clock-state :in :stopclock
   :description "Test changing the state of the clock")
 
 (test clock-stop-and-run
@@ -101,7 +101,7 @@
     (is (eq nil (setf (paused c) nil)))
     (is (eq nil (setf (paused c) nil)))))
 
-(def-suite* clock-time :in :clock
+(def-suite* clock-time :in :stopclock
   :description "Test changing the time of the clock")
 
 (test clock-shift
@@ -128,7 +128,7 @@
     (stop c)
     (is (= 13 (setf (time c) 13)))))
 
-(def-suite* clock-time-flow :in :clock
+(def-suite* clock-time-flow :in :stopclock
   :description "Test changing the time flow of the clock")
 
 (test clock-accelerate
@@ -159,7 +159,7 @@
     (is (eq c (accelerate c -1)))
     (is (= 10 (setf (time-flow c) 10)))))
 
-(def-suite* clock-reset :in :clock
+(def-suite* clock-reset :in :stopclock
   :description "Test the reset function")
 
 (test clock-reset-time
@@ -197,21 +197,21 @@
     (is (eq c (reset c :run t :time-flow 4)))
     (is (eq c (reset c :paused t :time-flow 4)))))
 
-(def-suite* clock-advanced :in :clock
+(def-suite* clock-advanced :in :stopclock
   :description "Test the time source, clock freeze, copy-clock")
 
 (test synchronized-clocks
-  (let* ((clock (clock:make-clock :paused t))
-         (1x (clock:make-clock :time-source (lambda () (clock:time clock))))
+  (let* ((clock (make-clock :paused t))
+         (1x (make-clock :time-source (lambda () (time clock))))
          (latency (sleep 0.01))
-         (5x (clock:make-clock :time-source (lambda () (clock:time clock))
+         (5x (make-clock :time-source (lambda () (time clock))
                                :time-flow 5)))
     (declare (ignore latency))
-    (clock:run clock)
+    (run clock)
     (sleep 1)
-    (clock:stop clock)
-    (is (= (* 5 (clock:time 1x))
-           (clock:time 5x)))))
+    (stop clock)
+    (is (= (* 5 (time 1x))
+           (time 5x)))))
 
 (test clocks-over-common-source
   (let* ((c  (make-clock :paused t))
