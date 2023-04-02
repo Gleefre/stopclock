@@ -5,14 +5,33 @@
 #+language: en
 #+options: toc:nil
 
+* About
 =stopclock= is a library for measuring time using (stop)clocks.
-
-#+toc: headlines 2
 
 It allows you to create a clock, pause it and resume it.
 You can also change its speed - for example you can have
 a clock that runs backwards, or a clock that runs 2 times faster.
-
+* Table of contents
+- [[#about][About]]
+- [[#table-of-contents][Table of contents]]
+- [[#tutorial][Tutorial]]
+  - [[#load-the-stopclock-library][Load the stopclock library]]
+    - [[#package-local-nickname][Package local nickname]]
+    - [[#tests][Tests]]
+    - [[#dont-use-package][Don't :use package]]
+  - [[#simple-usage][Simple usage]]
+  - [[#copy-clock][Copy clock]]
+  - [[#clock-parameters][Clock parameters]]
+  - [[#state-of-the-clock][State of the clock]]
+  - [[#time-on-the-clock][Time on the clock]]
+  - [[#speed-of-the-clock][Speed of the clock]]
+    - [[#zero-clock-speed-error][zero-clock-speed-error]]
+  - [[#reset-the-clock][Reset the clock]]
+  - [[#time-source][Time source]]
+  - [[#synchronized-clocks][Synchronized clocks]]
+  - [[#clock-freeze][Clock freeze]]
+- [[#bugs--contributions][Bugs & Contributions]]
+- [[#license][License]]
 * Tutorial
 ** Load the stopclock library
    To use this library you need to clone this repository and load the ~clock~ system it defines.
