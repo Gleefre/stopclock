@@ -55,9 +55,9 @@ a clock that runs backwards, or a clock that runs 2 times faster.
     #+END_SRC
     The rest of this tutorial uses ~sc~ as a local nickname for ~stopclock~.
 *** Tests
-    You can run tests with asdf. Tests system depends on ~fiveam~ library.
+    You can run tests with asdf. Test system depends on ~fiveam~ library.
     #+BEGIN_SRC lisp
-    (asdf:test-system :stopclock/tests)  ; depends on fiveam
+    (asdf:test-system :stopclock)  ; depends on fiveam
     ; ...
     ; Did 564 checks.
     ;    Pass: 564 (100%)

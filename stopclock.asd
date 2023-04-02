@@ -3,7 +3,8 @@
   :version "0.0.9"
   :author "Grolter <varedif.a.s@gmail.com>"
   :license "Apache 2.0"
-  :components ((:file "stopclock")))
+  :components ((:file "stopclock"))
+  :in-order-to ((test-op (test-op "stopclock/tests"))))
 
 (defsystem "stopclock/tests"
   :description "test system for stopclock"
@@ -11,4 +12,4 @@
   :license "Apache 2.0"
   :depends-on ("stopclock" "fiveam")
   :components ((:file "tests"))
-  :perform (test-op (op c) (symbol-call :fiveam :run! :stopclock)))
+  :perform (test-op (op c) (symbol-call :fiveam '#:run! :stopclock)))
