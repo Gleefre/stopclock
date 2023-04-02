@@ -5,12 +5,12 @@
 #+language: en
 #+options: toc:nil
 
-* About
 =stopclock= is a library for measuring time using (stop)clocks.
 
 It allows you to create a clock, pause it and resume it.
 You can also change its speed - for example you can have
 a clock that runs backwards, or a clock that runs 2 times faster.
+
 * Table of contents
 - [[#about][About]]
 - [[#table-of-contents][Table of contents]]
