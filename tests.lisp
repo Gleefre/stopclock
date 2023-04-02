@@ -165,7 +165,16 @@
 (test clock-reset-time
   (let ((c (make-clock :time 100)))
     (reset c :paused t)
-    (is (= 0 (time c)))))
+    (is (= 0 (time c)))
+    (for-all ((time (gen-float)))
+      (reset c :paused t :time time)
+      (is (= time (time c))))
+    (for-all ((time (gen-integer))
+              (speed-absolute-value (gen-integer :min 1))
+              (sign (gen-one-element 1 -1)))
+      (let ((speed (* sign speed-absolute-value)))
+        (reset c :paused t :time time :speed speed)
+        (is (= time (time c)))))))
 
 (test clock-reset-state
   (let ((c (make-clock)))
