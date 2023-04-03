@@ -65,7 +65,7 @@ than an ordinary clock.
     ;    Pass: 564 (100%)
     ;    Skip: 0 ( 0%)
     ;    Fail: 0 ( 0%)
-    T
+    ; => T
     #+END_SRC
 *** Don't :use package
     Note that you can't ~(use-package :stopclock)~ because it causes name-conflicts with ~common-lisp~ package.
