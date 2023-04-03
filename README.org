@@ -162,8 +162,8 @@ than an ordinary clock.
 ** State of the clock
    The paused / running state of the clock can be accessed with function ~paused~.
    The state can be set by combining ~paused~ with ~setf~.
-   It also can be set by functions ~sc:run~ (or a synonymous ~sc:start~),
-   ~sc:pause~ (or a synonymous ~sc:stop~) and ~sc:toggle~.
+   It also can be set by functions ~run~ (or a synonymous ~start~),
+   ~pause~ (or a synonymous ~stop~) and ~toggle~.
    These function return the clock itself.
    #+BEGIN_SRC lisp
    CL-USER> (sc:make-clock :paused t)
