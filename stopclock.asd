@@ -1,6 +1,6 @@
 (defsystem "stopclock"
   :description "stopclock is a library for measuring time using (stop)clocks"
-  :version "1.0.0"
+  :version "1.0.1"
   :author "Grolter <varedif.a.s@gmail.com>"
   :license "Apache 2.0"
   :components ((:file "stopclock"))
