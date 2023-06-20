@@ -7,6 +7,8 @@
 
 =stopclock= is a library for measuring time using (stop)clocks.
 
+[[http://quickdocs.org/stopclock/][file:http://quickdocs.org/badge/sketch.svg]]
+
 It allows you to create a clock, pause it and resume it.
 You can change its speed and adjust its time at any moment.
 For example you can have a clock that runs backwards 2 times faster
@@ -35,11 +37,9 @@ than an ordinary clock.
 - [[#license][License]]
 * Tutorial
 ** Load the stopclock library
-   To use this library you need to clone this repository and load the ~stopclock~ system it defines.
+   You can load this library from quicklisp:
    #+BEGIN_SRC lisp
-   (ql:quickload :stopclock)  ; with quicklisp
-   (asdf:load-system :stopclock)  ; with asdf
-   (load "path/to/repository/stopclock.lisp")  ; without loading the system
+   (ql:quickload :stopclock)
    #+END_SRC
 *** Local nickname
     You can define local nickname for this package.
