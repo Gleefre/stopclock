@@ -47,6 +47,7 @@
   (:documentation "Condition of setting the clock speed equal to zero.")
   (:report (lambda (condition stream)
              (format stream
+                     "~A~%  CLOCK: ~A"
                      (slot-value condition 'message)
                      (clock condition)))))
 
@@ -136,7 +137,7 @@ should be `:paused' or `:run' (`:paused' takes precedence over `:run')."
   (when (zerop factor)
     (error 'zero-clock-speed-error
            :clock clock
-           :message "You cannot accelerate the speed of the clock by 0.~%  CLOCK: ~a"))
+           :message "You cannot accelerate the speed of the clock by 0."))
   (with-a-clock-slots clock
     ;; time = (now - start) * old-speed
     ;;      = (now - new-start) * old-speed * factor
@@ -154,7 +155,7 @@ should be `:paused' or `:run' (`:paused' takes precedence over `:run')."
   (when (zerop new-speed)
     (error 'zero-clock-speed-error
            :clock clock
-           :message "You cannot set speed to be equal to zero.~%  CLOCK: ~a"))
+           :message "You cannot set speed to be equal to zero."))
   (accelerate clock (/ new-speed (speed clock)))
   (speed clock))
 
