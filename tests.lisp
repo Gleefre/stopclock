@@ -43,7 +43,7 @@
           (c- (make-clock :speed (- speed))))
       (is-false (minusp (time c+)))
       (is-false (plusp (time c-)))
-      (sleep 1/100)
+      (sleep 1/10)
       (is-true (plusp (time c+)))
       (is-true (minusp (time c-))))))
 
