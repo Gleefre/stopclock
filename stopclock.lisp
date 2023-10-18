@@ -161,6 +161,8 @@ should be `:paused' or `:run' (`:paused' takes precedence over `:run')."
 
 ;;; Clock state
 
+(declaim (inline stop pause run start paused (setf paused) toggle))
+
 (defun stop (clock)
   "Stops the `clock', returns the `clock' itself. Synonymous to `pause' function."
   (with-a-clock-slots clock
