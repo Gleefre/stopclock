@@ -169,9 +169,7 @@ should be `:paused' or `:run' (`:paused' takes precedence over `:run')."
 
 (defun pause (clock)
   "Pauses the `clock', returns the `clock' itself. Synonymous to `stop' function."
-  (with-a-clock-slots clock
-    (setf pause-time (a-now)))
-  clock)
+  (stop clock))
 
 (defun run (clock)
   "Runs the `clock', returns the `clock' itself. Synonymous to `start' function."
@@ -184,12 +182,7 @@ should be `:paused' or `:run' (`:paused' takes precedence over `:run')."
 
 (defun start (clock)
   "Starts the `clock', returns the `clock' itself. Synonymous to `run' function."
-  (with-a-clock-slots clock
-    (when pause-time
-      (incf start-time (- (funcall time-source)
-                          pause-time))
-      (setf pause-time nil)))
-  clock)
+  (run clock))
 
 (defun paused (clock)
   "Returns T if the `clock' is paused and NIL if it is running."
