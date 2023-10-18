@@ -38,14 +38,15 @@
     (is-false (paused c))))
 
 (test make-clock-time-speed
-  (for-all ((speed (gen-integer :min 1)))
-    (let ((c+ (make-clock :speed speed))
-          (c- (make-clock :speed (- speed))))
-      (is-false (minusp (time c+)))
-      (is-false (plusp (time c-)))
-      (sleep 1/10)
-      (is-true (plusp (time c+)))
-      (is-true (minusp (time c-))))))
+  (let ((*num-trials* 10))
+    (for-all ((speed (gen-integer :min 1)))
+      (let ((c+ (make-clock :speed speed))
+            (c- (make-clock :speed (- speed))))
+        (is-false (minusp (time c+)))
+        (is-false (plusp (time c-)))
+        (sleep 1/10)
+        (is-true (plusp (time c+)))
+        (is-true (minusp (time c-)))))))
 
 (test make-clock-zero-speed
   (signals zero-clock-speed-error (make-clock :speed 0)))
