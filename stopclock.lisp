@@ -82,7 +82,7 @@
    :time-source time-source
    :freeze nil))
 
-;;; A pair of internal macros
+;;; A pair of internal anaphoric macros
 
 (defmacro with-a-clock-slots (clock &body body)
   `(with-slots (start-time pause-time time-source speed freeze)
