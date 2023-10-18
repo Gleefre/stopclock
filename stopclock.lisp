@@ -28,6 +28,8 @@
 
 ;;; Possible functions for time
 
+(declaim (inline real-time run-time))
+
 (defun real-time ()
   (/ (get-internal-real-time)
      internal-time-units-per-second))
@@ -92,6 +94,8 @@
 
 ;;; Clock time
 
+(declaim (inline time (setf time) adjust reset))
+
 (defun time (clock)
   "Returns the current time on the `clock'."
   (with-a-clock-slots clock
@@ -126,6 +130,8 @@ should be `:paused' or `:run' (`:paused' takes precedence over `:run')."
   clock)
 
 ;;; Clock speed
+
+(declaim (inline speed accelerate (setf speed)))
 
 (defun speed (clock)
   "Returns the current `speed' of the `clock'."
@@ -205,6 +211,8 @@ returns the `clock' itself."
       (stop clock)))
 
 ;;; Freezing the clock
+
+(declaim (inline freeze unfreeze))
 
 (defun freeze (clock)
   "Freezes the `clock': the time passed will be counted during `unfreeze' if clock is running."
